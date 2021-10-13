@@ -44,7 +44,21 @@ const resolvers = {
         {$push: {saveBooks: { args }}}, {new: true}
       )
     }
+  },
+  // Translating from user-controller.js
+  removeBook: async (parent, {bookId}, context) => {
+    if (context.user) {
+    const updatedUser = await User.findOneAndUpdate(
+      {_id: context.user._id},
+      {$pull: {savedBooks: {bookId: bookId }}},
+      {new: true}
+    
+    );
+    return updatedUser;
   }
+  throw new AuthenticationError("You are not logged in");
+  }
+
 };
 
 module.exports = resolvers;
